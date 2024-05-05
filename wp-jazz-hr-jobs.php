@@ -239,23 +239,23 @@ if (! class_exists("JazzHRJobs")) {
                 <option value="default" <?php selected($this->options['url_select'], "default"); ?>>Jazz HR Job Details Page</option>
                 <option value="custom" <?php selected($this->options['url_select'], "custom"); ?>>Jazz HR Custom Job Page</option>
             </select>
-        <?php
-        }
+<?php
+}
 
-        public function JobsShortCode($atts)
-        {
-            global $post;
-            $args = shortcode_atts(array(
-                'sort_by' => "",
-                'sort_order' => ''
-                ), $atts);
-            
-            if ((isset($this->api_key) && $this->api_key != '' && (isset($this->subdomain) && $this->subdomain != ''))) {
-                $output = '';
-                $positions = $this->get_jazz_positions();
-                $positions = $this->sortJobs($positions, $args["sort_by"], $args["sort_order"]);
+public function JobsShortCode($atts)
+{
+    global $post;
+    $args = shortcode_atts(array(
+        'sort_by' => "",
+        'sort_order' => ''
+    ), $atts);
+    
+    if ((isset($this->api_key) && $this->api_key != '' && (isset($this->subdomain) && $this->subdomain != ''))) {
+        $output = '';
+        $positions = $this->get_jazz_positions();
+        $positions = $this->sortJobs($positions, $args["sort_by"], $args["sort_order"]);
 
-                $output .= "
+        $output .= "
                     <div class='job-filters'>
                       {$this->generateFilterDropdowns()}
                     </div>
@@ -264,20 +264,22 @@ if (! class_exists("JazzHRJobs")) {
                         <p class='sub-title'>There are currently no jobs matching your criteria.</p>
                       </div>";
 
-                $output .= '<ul class="job-listings">';
-                foreach ($positions as $position) {
-                    list($code, $title) = explode(' - ', $position['title'], 2);
-                    $output .= "<li class='job-listing' data-posting-id='{$position['id']}' data-filter-date='{$position['createdAt']}' data-filter-location='{$position['location']}' data-filter-department='{$position['department']}' data-filter-commitment='{$position['commitment']}' data-featured='0' data-show='true'>
+        $output .= '<ul class="job-listings">';
+        foreach ($positions as $position) {
+            list($code, $title) = explode(' - ', $position['title'], 2);
+            $output .= "<li class='job-listing' data-posting-id='{$position['id']}' data-filter-date='{$position['createdAt']}' data-filter-location='{$position['location']}' data-filter-department='{$position['department']}' data-filter-commitment='{$position['commitment']}' data-featured='0' data-show='true'>
                             <div class='posting'>
                                 <h4>{$code}</h4>
                                 <h4><a href='{$position['applyUrl']}' target='_blank'>{$title}</a></h4>
                                 <div class='posting-categories'>
                                 <div href='#' class='sort-by-location posting-category posting-location'>
-                                    <svg class=\"location-icon\" xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"26\" viewBox=\"0 0 18 26\" fill=\"none\">
+                                    <svg class=\"icon svg-icon posting-location\" xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"26\" viewBox=\"0 0 18 26\" fill=\"none\">
                                     <path d=\"M9 0C4.02429 0 0 4.069 0 9.1C0 15.925 9 26 9 26C9 26 18 15.925 18 9.1C18 4.069 13.9757 0 9 0ZM9 12.35C7.22571 12.35 5.78571 10.894 5.78571 9.1C5.78571 7.306 7.22571 5.85 9 5.85C10.7743 5.85 12.2143 7.306 12.2143 9.1C12.2143 10.894 10.7743 12.35 9 12.35Z\" fill=\"#08125A\"/>
                                     </svg> {$position['location']}</div>
-                                    <div href='#' class='sort-by-commitment posting-category posting-commitment'><em>Job Type:</em> {$position['commitment']}</div>
-                                    <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"23\" height=\"23\" viewBox=\"0 0 23 23\" fill=\"none\">
+                                    <div href='#' class='sort-by-commitment posting-category posting-commitment'><em>Job Type:</em> {$position['commitment']}
+                                </div>
+                                <div>
+                                    <svg class=\"icon svg-icon posting-team\" xmlns=\"http://www.w3.org/2000/svg\" width=\"23\" height=\"23\" viewBox=\"0 0 23 23\" fill=\"none\">
                                       <g clip-path=\"url(#clip0_2001_52)\">
                                         <path d=\"M15.3333 10.5416C16.9242 10.5416 18.1987 9.25746 18.1987 7.66663C18.1987 6.07579 16.9242 4.79163 15.3333 4.79163C13.7425 4.79163 12.4583 6.07579 12.4583 7.66663C12.4583 9.25746 13.7425 10.5416 15.3333 10.5416ZM7.66667 10.5416C9.2575 10.5416 10.5321 9.25746 10.5321 7.66663C10.5321 6.07579 9.2575 4.79163 7.66667 4.79163C6.07583 4.79163 4.79167 6.07579 4.79167 7.66663C4.79167 9.25746 6.07583 10.5416 7.66667 10.5416ZM7.66667 12.4583C5.43375 12.4583 0.958332 13.5795 0.958332 15.8125V18.2083H14.375V15.8125C14.375 13.5795 9.89958 12.4583 7.66667 12.4583ZM15.3333 12.4583C15.0554 12.4583 14.7392 12.4775 14.4037 12.5062C15.5154 13.3112 16.2917 14.3941 16.2917 15.8125V18.2083H22.0417V15.8125C22.0417 13.5795 17.5662 12.4583 15.3333 12.4583Z\" fill=\"#08125A\"/>
                                       </g>
@@ -286,8 +288,7 @@ if (! class_exists("JazzHRJobs")) {
                                           <rect width=\"23\" height=\"23\" fill=\"white\"/>
                                         </clipPath>
                                       </defs>
-                                    </svg>
-                                    <span href='#' class='posting-department'>{$position['department']}</span>
+                                    </svg> <span href='#' class='posting-department'>{$position['department']}</span>
                                 </div>
                             <div class='posting-apply'>
                                 <a class='apply-button' href='{$position['applyUrl']}' target='_blank'>Apply</a>
@@ -295,72 +296,72 @@ if (! class_exists("JazzHRJobs")) {
                             </div> 
                             
                           </li>
-                          ";
-                }
-                $output .= '</ul>';
-                $output .= '</div>';
-                $output .= '</div>';
+            ";
+        }
+        $output .= '</ul>';
+        $output .= '</div>';
+        $output .= '</div>';
 
-                $output_wrapped = "<div class='jazz_jobs_wrapper'>
+        $output_wrapped = "<div class='jazz_jobs_wrapper'>
                                     <div class='output'>
                                         {$output}
                                     </div>
                                   </div>";
-                return $output_wrapped;
-            }
-        }
+        return $output_wrapped;
+    }
+}
 
-        public function generateFilterDropdowns()
-        {
-            // Location Filter
-            $locations = $this->get_jazz_locations();
-            $location_options = "<option value=''> - Location - </option>";
-            foreach ($locations as $location) {
-                $location_options .= "<option value='{$location}'>$location</option>";
-            }
-            $location_output = "
+public function generateFilterDropdowns()
+{
+    // Location Filter
+    $locations = $this->get_jazz_locations();
+    $location_options = "<option value=''> - Location - </option>";
+    foreach ($locations as $location) {
+        $location_options .= "<option value='{$location}'>$location</option>";
+    }
+    $location_output = "
             <select class='form-control filter' data-filter='location'>
               {$location_options}
             </select>
-          ";
+    ";
 
-            // Teams
-            $teams = $this->get_jazz_teams();
-            $team_options = "<option value=''> - Team - </option>";
-            foreach ($teams as $team) {
-                $team_options .= "<option value='{$team}'>$team</option>";
-            }
-            $team_output = "
+    // Teams
+    $teams = $this->get_jazz_teams();
+    $team_options = "<option value=''> - Team - </option>";
+    foreach ($teams as $team) {
+        $team_options .= "<option value='{$team}'>$team</option>";
+    }
+    $team_output = "
             <select class='form-control filter' data-filter='team'>
               {$team_options}
             </select>
-          ";
+    ";
 
-            // Departments
-            $depts = $this->get_jazz_departments();
-            $dept_options = "<option value=''> - Department - </option>";
-            foreach ($depts as $dept) {
-                $dept_options .= "<option value='{$dept}'>$dept</option>";
-            }
-            $dept_output = "
+    // Departments
+    $depts = $this->get_jazz_departments();
+    $dept_options = "<option value=''> - Department - </option>";
+    foreach ($depts as $dept) {
+        $dept_options .= "<option value='{$dept}'>$dept</option>";
+    }
+    $dept_output = "
             <select class='form-control filter' data-filter='department'>
               {$dept_options}
             </select>
-          ";
+    ";
 
-            // Job Type / Commitment
-            $commitments = $this->get_jazz_commitments();
-            $commitment_options = "<option value=''> - Job Type - </option>";
-            foreach ($commitments as $commitment) {
-                $commitment_options .= "<option value='{$commitment}'>$commitment</option>";
-            }
-            $commitment_output = "
+    // Job Type / Commitment
+    $commitments = $this->get_jazz_commitments();
+    $commitment_options = "<option value=''> - Job Type - </option>";
+    foreach ($commitments as $commitment) {
+        $commitment_options .= "<option value='{$commitment}'>$commitment</option>";
+    }
+    $commitment_output = "
             <select class='form-control filter' data-filter='commitment'>
               {$commitment_options}
             </select>
-          ";
+    ";
 
-            return "<div class='filter-row'>
+    return "<div class='filter-row'>
               <div class='col-4'>
                 {$location_output} 
               </div>
@@ -371,218 +372,218 @@ if (! class_exists("JazzHRJobs")) {
                 {$commitment_output}
               </div>
             </div>";
-        }
+}
 
-        // Send Curl Request to Lever Endpoint and return the response
-        public function sendRequest()
-        {
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, $this->apiBaseUrl . 'jobs/status/open?apikey=' .$this->api_key);
-            curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-            $response = json_decode(curl_exec($ch));
-            return $response;
-        }
+// Send Curl Request to Lever Endpoint and return the response
+public function sendRequest()
+{
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $this->apiBaseUrl . 'jobs/status/open?apikey=' .$this->api_key);
+    curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+    $response = json_decode(curl_exec($ch));
+    return $response;
+}
 
-        public function get_jazz_positions()
-        {
-            // Get any existing copy of our transient data
-            if (false === ($jobs = get_transient('jazz_positions'))) {
-                // It wasn't there, so make a new API Request and regenerate the data
-                $positions = $this->sendRequest();
-                $jobs = [];
+public function get_jazz_positions()
+{
+    // Get any existing copy of our transient data
+    if (false === ($jobs = get_transient('jazz_positions'))) {
+        // It wasn't there, so make a new API Request and regenerate the data
+        $positions = $this->sendRequest();
+        $jobs = [];
 
-                if ($positions != '') {
-                    if (is_array($positions)) {
-                        foreach ($positions as $item) {
-                            $jazz_position = [
-                            'id' => $item->id,
-                            'title' => $item->title,
-                            'location' => $item->city . ', ' . $item->state,
-                            'commitment' => $item->type,
-                            'department' => $item->department,
-                            'team' => $item->team_id,
-                            'description' => preg_replace('#(<[a-z ]*)(style=("|\')(.*?)("|\'))([a-z ]*>)#', '\\1\\6', $item->description),
-                            'applyUrl' => $this->generateApplyUrl($item),
-                            'createdAt' => strtotime($item->original_open_date)
-                            ];
-                            //Ignore Spontaneous Application
-                            if($item->title !== "Spontaneous Application")
-                                array_push($jobs, $jazz_position);
-                        }
-                    } else {
-                        $jazz_position = [
-                            'id' => $positions->id,
-                            'title' => $positions->title,
-                            'location' => $positions->city . ', ' . $positions->state,
-                            'commitment' => $positions->type,
-                            'department' => $positions->department,
-                            'team' => $positions->team_id,
-                            'description' => preg_replace('#(<[a-z ]*)(style=("|\')(.*?)("|\'))([a-z ]*>)#', '\\1\\6', $positions->description),
-                            'applyUrl' => $this->generateApplyUrl($positions),
-                            'createdAt' => strtotime($positions->original_open_date)
-                        ];
-                        if($positions->title !== "Spontaneous Application")
-                            array_push($jobs, $jazz_position);
-                    }
-
-                    // Cache the Response
-                    $this->storeJazzPostions($jobs);
+        if ($positions != '') {
+            if (is_array($positions)) {
+                foreach ($positions as $item) {
+                    $jazz_position = [
+                        'id' => $item->id,
+                        'title' => $item->title,
+                        'location' => $item->city . ', ' . $item->state,
+                        'commitment' => $item->type,
+                        'department' => $item->department,
+                        'team' => $item->team_id ? $item->team_id : "",
+                        'description' => preg_replace('#(<[a-z ]*)(style=("|\')(.*?)("|\'))([a-z ]*>)#', '\\1\\6', $item->description),
+                        'applyUrl' => $this->generateApplyUrl($item),
+                        'createdAt' => strtotime($item->original_open_date)
+                    ];
+                    //Ignore Spontaneous Application
+                    if($item->title !== "Spontaneous Application")
+                        array_push($jobs, $jazz_position);
                 }
             } else {
-                // Get any existing copy of our transient data
-                $jobs = unserialize(get_transient('jazz_positions'));
-            }
-            // Finally return the data
-            return $jobs;
-        }
-
-        public function get_jazz_locations()
-        {
-            $locations = array();
-            $positions = $this->get_jazz_positions();
-
-            foreach ($positions as $position) {
-                $locations[]  = $position['location'];
-            }
-
-            $locations = array_unique($locations);
-            sort($locations);
-
-            return $locations;
-        }
-
-        public function get_jazz_commitments()
-        {
-            $commitments = array();
-            $positions = $this->get_jazz_positions();
-
-            foreach ($positions as $position) {
-                $commitments[]  = $position['commitment'];
+                $jazz_position = [
+                    'id' => $positions->id,
+                    'title' => $positions->title,
+                    'location' => $positions->city . ', ' . $positions->state,
+                    'commitment' => $positions->type,
+                    'department' => $positions->department,
+                    'team' => $positions->team_id,
+                    'description' => preg_replace('#(<[a-z ]*)(style=("|\')(.*?)("|\'))([a-z ]*>)#', '\\1\\6', $positions->description),
+                    'applyUrl' => $this->generateApplyUrl($positions),
+                    'createdAt' => strtotime($positions->original_open_date)
+                ];
+                if($positions->title !== "Spontaneous Application")
+                    array_push($jobs, $jazz_position);
             }
 
-            $commitments = array_unique($commitments);
-            sort($commitments);
-
-            return $commitments;
+            // Cache the Response
+            $this->storeJazzPostions($jobs);
         }
+    } else {
+        // Get any existing copy of our transient data
+        $jobs = unserialize(get_transient('jazz_positions'));
+    }
+    // Finally return the data
+    return $jobs;
+}
 
-        public function get_jazz_teams()
-        {
-            $teams = array();
-            $positions = $this->get_jazz_positions();
+public function get_jazz_locations()
+{
+    $locations = array();
+    $positions = $this->get_jazz_positions();
 
-            foreach ($positions as $position) {
-                $teams[]  = $position['team'];
-            }
+    foreach ($positions as $position) {
+        $locations[]  = $position['location'];
+    }
 
-            $teams = array_unique($teams);
-            sort($teams);
+    $locations = array_unique($locations);
+    sort($locations);
 
-            return $teams;
-        }
+    return $locations;
+}
 
-        public function get_jazz_departments()
-        {
-            $depts = [];
-            $positions = $this->get_jazz_positions();
+public function get_jazz_commitments()
+{
+    $commitments = array();
+    $positions = $this->get_jazz_positions();
 
-            foreach ($positions as $position) {
-                $depts[] = $position['department'];
-            }
+    foreach ($positions as $position) {
+        $commitments[]  = $position['commitment'];
+    }
 
-            $depts = array_unique($depts);
-            sort($depts);
+    $commitments = array_unique($commitments);
+    sort($commitments);
 
-            return $depts;
-        }
+    return $commitments;
+}
 
-        public function sortJobs($jobs, $sortBy, $sortOrder) {
-            if($sortBy === "title" && $sortOrder === "asc") {
-                
-                usort($jobs, function($a, $b)
-                {
-                    return strtolower($a["title"]) > strtolower($b["title"]);
-                });
-            }
+public function get_jazz_teams()
+{
+    $teams = array();
+    $positions = $this->get_jazz_positions();
 
-            if($sortBy === "title" && $sortOrder === "desc") {
-                usort($jobs, function($a, $b)
-                {
-                    return strtolower($a["title"]) < strtolower($b["title"]);
-                });
-            }
+    foreach ($positions as $position) {
+        $teams[]  = $position['team'];
+    }
 
-            if($sortBy === "date" && $sortOrder === "asc") {
-                usort($jobs, function($a, $b) {
-                    return strtotime($a["createdAt"]) - strtotime($b["createdAt"]);
-                });
-            }
+    $teams = array_unique($teams);
+    sort($teams);
 
-            if($sortBy === "date" && $sortOrder === "desc") {
-                usort($jobs, function($a, $b) {
-                    return strtotime($b["createdAt"]) - strtotime($a["createdAt"]);
-                });
-            }
+    return $teams;
+}
 
-            return $jobs;
+public function get_jazz_departments()
+{
+    $depts = [];
+    $positions = $this->get_jazz_positions();
 
-            
-        }
+    foreach ($positions as $position) {
+        $depts[] = $position['department'];
+    }
 
-        public function generateApplyUrl($position) {
-            if($this->job_url == 'custom') {
-                return $this->subdomain . '/apply/' . $position->board_code . '/' . sanitize_title($position->title);
-            } else {
-                return $this->subdomain . '/apply/jobs/details/' . $position->board_code;
-            }
-        }
+    $depts = array_unique($depts);
+    sort($depts);
 
-        public function storeJazzPostions($positions)
-        {
-            // Get any existing copy of our transient data
-            if (false === ($jazz_data = get_transient('jazz_positions'))) {
-                // It wasn't there, so regenerate the data and save the transient for 1 hour
-                $jazz_data = serialize($positions);
-                set_transient('jazz_positions', $jazz_data, 1 * HOUR_IN_SECONDS);
-            }
-        }
+    return $depts;
+}
 
-        public function flushStoredInformation()
-        {
-            //Delete transient to force a new pull from the API
-            delete_transient('jazz_positions');
-        }
+public function sortJobs($jobs, $sortBy, $sortOrder) {
+    if($sortBy === "title" && $sortOrder === "asc") {
+        
+        usort($jobs, function($a, $b)
+            {
+                return strtolower($a["title"]) > strtolower($b["title"]);
+            });
+    }
 
-        public function clearCache()
-        {
-            if (isset($_POST['action']) && $_POST['action'] === 'cache_clear') {
-                $this->flushStoredInformation();
-                $output = ['cache_cleared' => true, 'message' => 'The Transients for the Job Listings have been cleared'];
-                echo json_encode($output);
-                exit;
-            }
-        }
+    if($sortBy === "title" && $sortOrder === "desc") {
+        usort($jobs, function($a, $b)
+            {
+                return strtolower($a["title"]) < strtolower($b["title"]);
+            });
+    }
 
-        //Returns the url of the plugin's root folder
-        protected function getBaseUrl()
-        {
-            return plugins_url(null, __FILE__);
-        }
+    if($sortBy === "date" && $sortOrder === "asc") {
+        usort($jobs, function($a, $b) {
+            return strtotime($a["createdAt"]) - strtotime($b["createdAt"]);
+        });
+    }
 
-        //Returns the physical path of the plugin's root folder
-        protected function getBasePath()
-        {
-            $folder = basename(dirname(__FILE__));
-            return WP_PLUGIN_DIR . "/" . $folder;
-        }
-    } //End Class
+    if($sortBy === "date" && $sortOrder === "desc") {
+        usort($jobs, function($a, $b) {
+            return strtotime($b["createdAt"]) - strtotime($a["createdAt"]);
+        });
+    }
 
-    /**
-     * Instantiate this class to ensure the action and shortcode hooks are hooked.
-     * This instantiation can only be done once (see it's __construct() to understand why.)
-     */
-    new JazzHRJobs();
+    return $jobs;
+
+    
+}
+
+public function generateApplyUrl($position) {
+    if($this->job_url == 'custom') {
+        return $this->subdomain . '/apply/' . $position->board_code . '/' . sanitize_title($position->title);
+    } else {
+        return $this->subdomain . '/apply/jobs/details/' . $position->board_code;
+    }
+}
+
+public function storeJazzPostions($positions)
+{
+    // Get any existing copy of our transient data
+    if (false === ($jazz_data = get_transient('jazz_positions'))) {
+        // It wasn't there, so regenerate the data and save the transient for 1 hour
+        $jazz_data = serialize($positions);
+        set_transient('jazz_positions', $jazz_data, 1 * HOUR_IN_SECONDS);
+    }
+}
+
+public function flushStoredInformation()
+{
+    //Delete transient to force a new pull from the API
+    delete_transient('jazz_positions');
+}
+
+public function clearCache()
+{
+    if (isset($_POST['action']) && $_POST['action'] === 'cache_clear') {
+        $this->flushStoredInformation();
+        $output = ['cache_cleared' => true, 'message' => 'The Transients for the Job Listings have been cleared'];
+        echo json_encode($output);
+        exit;
+    }
+}
+
+//Returns the url of the plugin's root folder
+protected function getBaseUrl()
+{
+    return plugins_url(null, __FILE__);
+}
+
+//Returns the physical path of the plugin's root folder
+protected function getBasePath()
+{
+    $folder = basename(dirname(__FILE__));
+    return WP_PLUGIN_DIR . "/" . $folder;
+}
+} //End Class
+
+/**
+ * Instantiate this class to ensure the action and shortcode hooks are hooked.
+ * This instantiation can only be done once (see it's __construct() to understand why.)
+ */
+new JazzHRJobs();
 } // End if class exists statement
