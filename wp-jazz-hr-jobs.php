@@ -27,6 +27,17 @@ License: GPL
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+function joinFilteredStrings(array $data, string $delimiter = ', '): string
+{
+  // Filter out empty strings and strings with only whitespaces or tabs
+  $filteredData = array_filter($data, function ($value) {
+    return trim($value) !== '';
+  });
+
+  // Join the filtered data with the specified delimiter
+  return implode($delimiter, $filteredData);
+}
+
 /**
 * Ensure class doesn't already exist
 */
@@ -401,7 +412,7 @@ public function get_jazz_positions()
                     $jazz_position = [
                         'id' => $item->id,
                         'title' => $item->title,
-                        'location' => $item->city . ', ' . $item->state,
+                        'location' => joinFilteredStrings([$item->city, $item->state]),
                         'commitment' => $item->type,
                         'department' => $item->department,
                         'team' => $item->team_id ? $item->team_id : "",
@@ -417,7 +428,7 @@ public function get_jazz_positions()
                 $jazz_position = [
                     'id' => $positions->id,
                     'title' => $positions->title,
-                    'location' => $positions->city . ', ' . $positions->state,
+                    'location' => joinFilteredStrings([$positions->city, $positions->state], ": "),
                     'commitment' => $positions->type,
                     'department' => $positions->department,
                     'team' => $positions->team_id,
