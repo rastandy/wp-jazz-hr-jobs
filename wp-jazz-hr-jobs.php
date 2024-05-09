@@ -280,16 +280,20 @@ public function JobsShortCode($atts)
             list($code, $title) = explode(' - ', $position['title'], 2);
             $output .= "<li class='job-listing' data-posting-id='{$position['id']}' data-filter-date='{$position['createdAt']}' data-filter-location='{$position['location']}' data-filter-department='{$position['department']}' data-filter-commitment='{$position['commitment']}' data-featured='0' data-show='true'>
                             <div class='posting'>
-                                <h4>{$code}</h4>
+                              <div class='posting-title'>
+                                <h4><a href='{$position['applyUrl']}' target='_blank'>{$code}</a></h4>
                                 <h4><a href='{$position['applyUrl']}' target='_blank'>{$title}</a></h4>
-                                <div class='posting-categories'>
-                                <div href='#' class='sort-by-location posting-category posting-location'>
-                                    <svg class=\"icon svg-icon posting-location\" xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"26\" viewBox=\"0 0 18 26\" fill=\"none\">
+                              </div>
+                              <div class='posting-categories'>
+                                <div class='posting-category posting-location'>
+                                  <svg class=\"icon svg-icon posting-location\" xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"26\" viewBox=\"0 0 18 26\" fill=\"none\">
                                     <path d=\"M9 0C4.02429 0 0 4.069 0 9.1C0 15.925 9 26 9 26C9 26 18 15.925 18 9.1C18 4.069 13.9757 0 9 0ZM9 12.35C7.22571 12.35 5.78571 10.894 5.78571 9.1C5.78571 7.306 7.22571 5.85 9 5.85C10.7743 5.85 12.2143 7.306 12.2143 9.1C12.2143 10.894 10.7743 12.35 9 12.35Z\" fill=\"#08125A\"/>
-                                    </svg> {$position['location']}</div>
-                                    <div href='#' class='sort-by-commitment posting-category posting-commitment'><em>Job Type:</em> {$position['commitment']}
+                                  </svg><span href='#' class='sort-by-location posting-category posting-location'>{$position['location']}</span>
                                 </div>
-                                <div>
+                                <div class='posting-category posting-commitment'>
+                                    <span href='#' class='sort-by-commitment posting-category posting-commitment'><em>Job Type:</em> {$position['commitment']}</span>
+                                </div>
+                                <div class='posting-category department posting-department'>
                                     <svg class=\"icon svg-icon posting-team\" xmlns=\"http://www.w3.org/2000/svg\" width=\"23\" height=\"23\" viewBox=\"0 0 23 23\" fill=\"none\">
                                       <g clip-path=\"url(#clip0_2001_52)\">
                                         <path d=\"M15.3333 10.5416C16.9242 10.5416 18.1987 9.25746 18.1987 7.66663C18.1987 6.07579 16.9242 4.79163 15.3333 4.79163C13.7425 4.79163 12.4583 6.07579 12.4583 7.66663C12.4583 9.25746 13.7425 10.5416 15.3333 10.5416ZM7.66667 10.5416C9.2575 10.5416 10.5321 9.25746 10.5321 7.66663C10.5321 6.07579 9.2575 4.79163 7.66667 4.79163C6.07583 4.79163 4.79167 6.07579 4.79167 7.66663C4.79167 9.25746 6.07583 10.5416 7.66667 10.5416ZM7.66667 12.4583C5.43375 12.4583 0.958332 13.5795 0.958332 15.8125V18.2083H14.375V15.8125C14.375 13.5795 9.89958 12.4583 7.66667 12.4583ZM15.3333 12.4583C15.0554 12.4583 14.7392 12.4775 14.4037 12.5062C15.5154 13.3112 16.2917 14.3941 16.2917 15.8125V18.2083H22.0417V15.8125C22.0417 13.5795 17.5662 12.4583 15.3333 12.4583Z\" fill=\"#08125A\"/>
@@ -300,7 +304,8 @@ public function JobsShortCode($atts)
                                         </clipPath>
                                       </defs>
                                     </svg> <span href='#' class='posting-department'>{$position['department']}</span>
-                                </div>
+                              </div>
+                            </div>
                             <div class='posting-apply'>
                                 <a class='apply-button' href='{$position['applyUrl']}' target='_blank'>Apply</a>
                             </div>
