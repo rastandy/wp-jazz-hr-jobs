@@ -280,10 +280,12 @@ public function JobsShortCode($atts)
             list($code, $title) = explode(' - ', $position['title'], 2);
             $output .= "<li class='job-listing' data-posting-id='{$position['id']}' data-filter-date='{$position['createdAt']}' data-filter-location='{$position['location']}' data-filter-department='{$position['department']}' data-filter-commitment='{$position['commitment']}' data-featured='0' data-show='true'>
                             <div class='posting'>
+                             <div class='posting-title-wrapper'>
                               <div class='posting-title'>
                                 <h4><a href='{$position['applyUrl']}' target='_blank'>{$code}</a></h4>
                                 <h4><a href='{$position['applyUrl']}' target='_blank'>{$title}</a></h4>
                               </div>
+                             </div>
                               <div class='posting-categories'>";
 
             if ($position['location'] && trim($position['location']) !== "")
