@@ -284,15 +284,22 @@ public function JobsShortCode($atts)
                                 <h4><a href='{$position['applyUrl']}' target='_blank'>{$code}</a></h4>
                                 <h4><a href='{$position['applyUrl']}' target='_blank'>{$title}</a></h4>
                               </div>
-                              <div class='posting-categories'>
+                              <div class='posting-categories'>";
+
+            if ($position['location'] && trim($position['location']) !== "")
+                $output .= "
                                 <div class='posting-category posting-location'>
                                   <svg class=\"icon svg-icon posting-location\" xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"26\" viewBox=\"0 0 18 26\" fill=\"none\">
                                     <path d=\"M9 0C4.02429 0 0 4.069 0 9.1C0 15.925 9 26 9 26C9 26 18 15.925 18 9.1C18 4.069 13.9757 0 9 0ZM9 12.35C7.22571 12.35 5.78571 10.894 5.78571 9.1C5.78571 7.306 7.22571 5.85 9 5.85C10.7743 5.85 12.2143 7.306 12.2143 9.1C12.2143 10.894 10.7743 12.35 9 12.35Z\" fill=\"#08125A\"/>
                                   </svg><span href='#' class='sort-by-location posting-category posting-location'>{$position['location']}</span>
-                                </div>
+                                </div>";
+            if ($position['commitment'] && trim($position['commitment']) !== "")
+                $output .= "
                                 <div class='posting-category posting-commitment'>
                                     <span href='#' class='sort-by-commitment posting-category posting-commitment'><em>Job Type:</em> {$position['commitment']}</span>
-                                </div>
+                                </div>";
+            if ($position['department'] && trim($position['department']) !== "")
+                $output .= "
                                 <div class='posting-category department posting-department'>
                                     <svg class=\"icon svg-icon posting-team\" xmlns=\"http://www.w3.org/2000/svg\" width=\"23\" height=\"23\" viewBox=\"0 0 23 23\" fill=\"none\">
                                       <g clip-path=\"url(#clip0_2001_52)\">
@@ -304,7 +311,8 @@ public function JobsShortCode($atts)
                                         </clipPath>
                                       </defs>
                                     </svg> <span href='#' class='posting-department'>{$position['department']}</span>
-                              </div>
+                                </div>";
+                $output .= "
                             </div>
                             <div class='posting-apply'>
                                 <a class='apply-button' href='{$position['applyUrl']}' target='_blank'>Apply</a>
