@@ -1,46 +1,46 @@
 <?php
 /*
-Plugin Name: Jazz HR Jobs Listings Plugin
-Description: Jazz HR is an online software that helps companies post jobs online, manage applicants and hire great employees.
-Plugin URI: http://www.niklasdahlqvist.com
-Author: Niklas Dahlqvist
-Author URI: http://www.niklasdahlqvist.com
-Version: 1.0.1
-Requires at least: 4.8.3
-License: GPL
-*/
+   Plugin Name: Jazz HR Jobs Listings Plugin
+   Description: Jazz HR is an online software that helps companies post jobs online, manage applicants and hire great employees.
+   Plugin URI: http://www.niklasdahlqvist.com
+   Author: Niklas Dahlqvist
+   Author URI: http://www.niklasdahlqvist.com
+   Version: 1.0.1
+   Requires at least: 4.8.3
+   License: GPL
+ */
 
 /*
    Copyright 2021  Niklas Dahlqvist  (email : dalkmania@gmail.com)
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License, version 2, as
-    published by the Free Software Foundation.
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License, version 2, as
+   published by the Free Software Foundation.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to the Free Software
+   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 
 function joinFilteredStrings(array $data, string $delimiter = ', '): string
 {
-  // Filter out empty strings and strings with only whitespaces or tabs
-  $filteredData = array_filter($data, function ($value) {
-    return trim($value) !== '';
-  });
+    // Filter out empty strings and strings with only whitespaces or tabs
+    $filteredData = array_filter($data, function ($value) {
+        return trim($value) !== '';
+    });
 
-  // Join the filtered data with the specified delimiter
-  return implode($delimiter, $filteredData);
+    // Join the filtered data with the specified delimiter
+    return implode($delimiter, $filteredData);
 }
 
 /**
-* Ensure class doesn't already exist
-*/
+ * Ensure class doesn't already exist
+ */
 if (! class_exists("JazzHRJobs")) {
     class JazzHRJobs
     {
@@ -130,126 +130,126 @@ if (! class_exists("JazzHRJobs")) {
         public function create_admin_page()
         {
             // Set class property
-        $this->options = get_option('jazz_hr_settings'); ?>
-        <div class="wrap jazz_jobs-settings">
-          <h2>Jazz HR Settings</h2>
-          <form method="post" action="options.php">
-          <?php
+            $this->options = get_option('jazz_hr_settings'); ?>
+    <div class="wrap jazz_jobs-settings">
+        <h2>Jazz HR Settings</h2>
+        <form method="post" action="options.php">
+            <?php
             // This prints out all hidden setting fields
             settings_fields('jazz_hr_settings_group');
             do_settings_sections('jazz_hr-settings-admin');
             submit_button();
             submit_button('Clear Cache', 'delete', 'clear_cache', false); ?>
-          </form>
-        </div>
-        <?php
-        }
+        </form>
+    </div>
+<?php
+}
 
-        /**
-         * Register and add settings
-         */
-        public function page_init()
-        {
-            register_setting(
-                'jazz_hr_settings_group', // Option group
-          'jazz_hr_settings', // Option name
-          array( $this, 'sanitize' ) // Sanitize
-            );
+/**
+ * Register and add settings
+ */
+public function page_init()
+{
+    register_setting(
+        'jazz_hr_settings_group', // Option group
+        'jazz_hr_settings', // Option name
+        array( $this, 'sanitize' ) // Sanitize
+    );
 
-            add_settings_section(
-                'jazz_hr_section', // ID
-          'Jazz HR Settings', // Title
-          array( $this, 'print_section_info' ), // Callback
-          'jazz_hr-settings-admin' // Page
-            );
+    add_settings_section(
+        'jazz_hr_section', // ID
+        'Jazz HR Settings', // Title
+        array( $this, 'print_section_info' ), // Callback
+        'jazz_hr-settings-admin' // Page
+    );
 
-            add_settings_field(
-                'subdomain', // ID
-          'Jazz HR Subdomain', // Title
-          array( $this, 'jazz_hr_subdomain_callback' ), // Callback
-          'jazz_hr-settings-admin', // Page
-          'jazz_hr_section' // Section
-            );
+    add_settings_field(
+        'subdomain', // ID
+        'Jazz HR Subdomain', // Title
+        array( $this, 'jazz_hr_subdomain_callback' ), // Callback
+        'jazz_hr-settings-admin', // Page
+        'jazz_hr_section' // Section
+    );
 
-            add_settings_field(
-                'api_key', // ID
-          'Jazz HR API Key', // Title
-          array( $this, 'jazz_hr_api_key_callback' ), // Callback
-          'jazz_hr-settings-admin', // Page
-          'jazz_hr_section' // Section
-            );
+    add_settings_field(
+        'api_key', // ID
+        'Jazz HR API Key', // Title
+        array( $this, 'jazz_hr_api_key_callback' ), // Callback
+        'jazz_hr-settings-admin', // Page
+        'jazz_hr_section' // Section
+    );
 
-            add_settings_field(
-                'url_select', // ID
-          'Jazz HR Job Posting URL', // Title
-          array( $this, 'jazz_hr_url_select_callback' ), // Callback
-          'jazz_hr-settings-admin', // Page
-          'jazz_hr_section' // Section
-            );
-        }
+    add_settings_field(
+        'url_select', // ID
+        'Jazz HR Job Posting URL', // Title
+        array( $this, 'jazz_hr_url_select_callback' ), // Callback
+        'jazz_hr-settings-admin', // Page
+        'jazz_hr_section' // Section
+    );
+}
 
-        /**
-         * Sanitize each setting field as needed
-         *
-         * @param array $input Contains all settings fields as array keys
-         */
-        public function sanitize($input)
-        {
-            $new_input = array();
-            if (isset($input['api_key'])) {
-                $new_input['api_key'] = sanitize_text_field($input['api_key']);
-            }
+/**
+ * Sanitize each setting field as needed
+ *
+ * @param array $input Contains all settings fields as array keys
+ */
+public function sanitize($input)
+{
+    $new_input = array();
+    if (isset($input['api_key'])) {
+        $new_input['api_key'] = sanitize_text_field($input['api_key']);
+    }
 
-            if (isset($input['subdomain'])) {
-                $new_input['subdomain'] = sanitize_text_field($input['subdomain']);
-            }
+    if (isset($input['subdomain'])) {
+        $new_input['subdomain'] = sanitize_text_field($input['subdomain']);
+    }
 
-            if (isset($input['url_select'])) {
-                $new_input['url_select'] = sanitize_text_field($input['url_select']);
-            }
+    if (isset($input['url_select'])) {
+        $new_input['url_select'] = sanitize_text_field($input['url_select']);
+    }
 
-            return $new_input;
-        }
+    return $new_input;
+}
 
-        /**
-         * Print the Section text
-         */
-        public function print_section_info()
-        {
-            echo '<p>Enter your settings below:';
-            echo '<br />and then use the <strong>[jazz_hr_job_listings]</strong> shortcode to display the content.</p>';
-            echo '<p>Use the <strong>[jazz_hr_job_listings sort_by=date sort_order=asc]</strong> shortcode to display the content ordered by created at date (Ascending). </p>';
-            echo '<p>Use the <strong>[jazz_hr_job_listings sort_by=date sort_order=desc]</strong> shortcode to display the content ordered by created at date (Descending). </p>';
-            echo '<p>Use the <strong>[jazz_hr_job_listings sort_by=title sort_order=asc]</strong> shortcode to display the content ordered by title (Ascending). </p>';
-            echo '<p>Use the <strong>[jazz_hr_job_listings sort_by=title sort_order=desc]</strong> shortcode to display the content ordered by title (Descending). </p>';
-        }
+/**
+ * Print the Section text
+ */
+public function print_section_info()
+{
+    echo '<p>Enter your settings below:';
+    echo '<br />and then use the <strong>[jazz_hr_job_listings]</strong> shortcode to display the content.</p>';
+    echo '<p>Use the <strong>[jazz_hr_job_listings sort_by=date sort_order=asc]</strong> shortcode to display the content ordered by created at date (Ascending). </p>';
+    echo '<p>Use the <strong>[jazz_hr_job_listings sort_by=date sort_order=desc]</strong> shortcode to display the content ordered by created at date (Descending). </p>';
+    echo '<p>Use the <strong>[jazz_hr_job_listings sort_by=title sort_order=asc]</strong> shortcode to display the content ordered by title (Ascending). </p>';
+    echo '<p>Use the <strong>[jazz_hr_job_listings sort_by=title sort_order=desc]</strong> shortcode to display the content ordered by title (Descending). </p>';
+}
 
-        /**
-         * Get the settings option array and print one of its values
-         */
-        public function jazz_hr_api_key_callback()
-        {
-            printf(
-                '<input type="text" id="api_key" class="narrow-fat" name="jazz_hr_settings[api_key]" value="%s" />',
-                isset($this->options['api_key']) ? esc_attr($this->options['api_key']) : ''
-            );
-        }
+/**
+ * Get the settings option array and print one of its values
+ */
+public function jazz_hr_api_key_callback()
+{
+    printf(
+        '<input type="text" id="api_key" class="narrow-fat" name="jazz_hr_settings[api_key]" value="%s" />',
+        isset($this->options['api_key']) ? esc_attr($this->options['api_key']) : ''
+    );
+}
 
-        public function jazz_hr_subdomain_callback()
-        {
-            printf(
-                '<small>https://</small><input type="text" id="subdomain" class="narrow-fat" name="jazz_hr_settings[subdomain]" value="%s" /><small>.applytojob.com</small>',
-                isset($this->options['subdomain']) ? esc_attr($this->options['subdomain']) : ''
-            );
-        }
+public function jazz_hr_subdomain_callback()
+{
+    printf(
+        '<small>https://</small><input type="text" id="subdomain" class="narrow-fat" name="jazz_hr_settings[subdomain]" value="%s" /><small>.applytojob.com</small>',
+        isset($this->options['subdomain']) ? esc_attr($this->options['subdomain']) : ''
+    );
+}
 
-        public function jazz_hr_url_select_callback()
-        {
-        ?>
-            <select id="url_select" name="jazz_hr_settings[url_select]">
-                <option value="default" <?php selected($this->options['url_select'], "default"); ?>>Jazz HR Job Details Page</option>
-                <option value="custom" <?php selected($this->options['url_select'], "custom"); ?>>Jazz HR Custom Job Page</option>
-            </select>
+public function jazz_hr_url_select_callback()
+{
+?>
+    <select id="url_select" name="jazz_hr_settings[url_select]">
+        <option value="default" <?php selected($this->options['url_select'], "default"); ?>>Jazz HR Job Details Page</option>
+        <option value="custom" <?php selected($this->options['url_select'], "custom"); ?>>Jazz HR Custom Job Page</option>
+    </select>
 <?php
 }
 
@@ -282,8 +282,8 @@ public function JobsShortCode($atts)
                             <div class='posting'>
                              <div class='posting-title-wrapper'>
                               <div class='posting-title'>
-                                <h4><a href='{$position['applyUrl']}' target='_blank'>{$code}</a></h4>
-                                <h4><a href='{$position['applyUrl']}' target='_blank'>{$title}</a></h4>
+                                <h4><a class='code' href='{$position['applyUrl']}' target='_blank'>{$code}</a></h4>
+                                <h4><a class='title' href='{$position['applyUrl']}' target='_blank'>{$title}</a></h4>
                               </div>
                              </div>
                               <div class='posting-categories'>";
@@ -314,7 +314,7 @@ public function JobsShortCode($atts)
                                       </defs>
                                     </svg> <span href='#' class='posting-department'>{$position['department']}</span>
                                 </div>";
-                $output .= "
+            $output .= "
                             </div>
                             <div class='posting-apply'>
                                 <a class='apply-button' href='{$position['applyUrl']}' target='_blank'>Apply</a>
