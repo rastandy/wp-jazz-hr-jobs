@@ -333,6 +333,34 @@ public function JobsShortCode($atts)
                                         {$output}
                                     </div>
                                   </div>";
+        $output_wrapped .= '<script src="https://unpkg.com/isotope-layout@3/dist/isotope.pkgd.min.js"></script>';
+        $output_wrapped .= '<script src="https://raw.githubusercontent.com/metafizzy/isotope-cells-by-row/master/cells-by-row.js"></script>';
+        $output_wrapped .= '
+<script>
+var grid = document.querySelector(".job-listings")
+var iso = new Isotope(grid, {
+  // main isotope options
+  itemSelector: ".job-listing",
+  // set layoutMode
+  percentPosition: true,
+  layoutMode: "fitRows",
+  // options for cellsByRow layout mode
+  fitRows: {
+    columnWidth: 300,
+    rowHeight: 450,
+    fitWidth: true
+  },
+  cellsByRow: {
+    columnWidth: 200,
+    rowHeight: 150
+  },
+  // options for masonry layout mode
+  masonry: {
+    columnWidth: 350,
+    rowHeight: 400,
+  }
+})
+</script>';
         return $output_wrapped;
     }
 }
