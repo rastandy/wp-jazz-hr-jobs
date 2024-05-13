@@ -333,10 +333,6 @@ public function JobsShortCode($atts)
                                         {$output}
                                     </div>
                                   </div>";
-        $output_wrapped .= "<script>
-           const gridManager = new GridManager('.job-listings', '.job-listing', 9); // Mostra 5 item per pagina
-           gridManager.showPage()
-           </script>";
         return $output_wrapped;
     }
 }

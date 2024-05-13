@@ -23,7 +23,8 @@ class FilterDropdowns {
                     window.scrollTo({
                         top: offsetY,
                         behavior: "smooth"
-                    });
+                    })
+                    window.gridManager.setPage(0);
                 },
                 false
             );
@@ -93,10 +94,6 @@ class FilterDropdowns {
     }
 }
 
-window.onload = function () {
-    new FilterDropdowns();
-};
-
 class GridManager {
     constructor(gridSelector, itemSelector, itemsPerPage) {
         this.grid = document.querySelector(gridSelector);
@@ -105,12 +102,14 @@ class GridManager {
         this.filteredItems = Array.from(this.items); // Copia degli item per il filtering
         this.itemsPerPage = itemsPerPage || 10; // Imposta il valore predefinito a 10 se non specificato
         this.currentPage = 0;
+        this.paginationContainer = null;
+        // this.createPagination()
     }
-
     filterItems(filterSelector) {
         this.filteredItems = Array.from(this.items).filter(item => item.matches(filterSelector));
         this.currentPage = 0; // Resetta alla prima pagina quando si applica un filtro
         this.showPage();
+        this.updatePagination();
     }
 
     showPage() {
@@ -119,7 +118,7 @@ class GridManager {
 
         this.items.forEach((item, index) => {
             if (index >= startIndex && index < endIndex) {
-                item.style.display = this.display;
+                item.style.display = 'block';
             } else {
                 item.style.display = 'none';
             }
@@ -131,6 +130,7 @@ class GridManager {
         if (this.currentPage < totalPages - 1) {
             this.currentPage++;
             this.showPage();
+            this.updatePagination();
         }
     }
 
@@ -138,6 +138,89 @@ class GridManager {
         if (this.currentPage > 0) {
             this.currentPage--;
             this.showPage();
+            this.updatePagination();
         }
     }
+
+    setPage(page) {
+        const totalPages = Math.ceil(this.filteredItems.length / this.itemsPerPage);
+        if (page < totalPages && page >= 0) {
+            this.currentPage = page
+            this.showPage()
+            this.updatePagination();
+        }
+    }
+
+    showPage() {
+        const startIndex = this.currentPage * this.itemsPerPage;
+        const endIndex = startIndex + this.itemsPerPage;
+
+        this.items.forEach((item, index) => {
+            if (index >= startIndex && index < endIndex) {
+                item.style.display = this.display;
+            } else {
+                item.style.display = 'none'
+            }
+        })
+    }
+
+    createPagination() {
+        const totalPages = Math.ceil(this.filteredItems.length / this.itemsPerPage);
+        this.paginationContainer = document.createElement('div');
+        this.paginationContainer.classList.add('pagination');
+
+        // Pagina precedente
+        const prevButton = document.createElement('button');
+        prevButton.textContent = '◄';
+        prevButton.addEventListener('click', () => this.previousPage());
+        this.paginationContainer.appendChild(prevButton);
+
+        // Pagine
+        for (let i = 0; i < totalPages; i++) {
+            const pageButton = document.createElement('button');
+            pageButton.textContent = i + 1;
+            if (i === this.currentPage) {
+                pageButton.disabled = true;
+            } else {
+                pageButton.addEventListener('click', () => {
+                    this.currentPage = i;
+                    this.showPage();
+                    this.updatePagination();
+                });
+            }
+            this.paginationContainer.appendChild(pageButton);
+        }
+
+        // Pagina successiva
+        const nextButton = document.createElement('button');
+        nextButton.textContent = '►';
+        nextButton.addEventListener('click', () => this.nextPage());
+        this.paginationContainer.appendChild(nextButton);
+
+        this.grid.parentNode.insertBefore(this.paginationContainer, this.grid.nextSibling);
+    }
+
+    updatePagination() {
+        if (!this.paginationContainer) {
+            this.createPagination();
+            return;
+        }
+
+        const totalPages = Math.ceil(this.filteredItems.length / this.itemsPerPage);
+        const pages = this.paginationContainer.querySelectorAll('button');
+
+        pages.forEach((page, index) => {
+            if (index === this.currentPage) {
+                page.disabled = true;
+            } else {
+                page.disabled = false;
+            }
+        });
+    }
+}
+
+window.onload = function () {
+    new FilterDropdowns()
+    // const gridManager = new GridManager('.job-listings', '.job-listing', 6) // Mostra65 item per pagina
+    // gridManager.showPage()
 }
