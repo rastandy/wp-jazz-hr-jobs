@@ -96,3 +96,48 @@ class FilterDropdowns {
 window.onload = function () {
     new FilterDropdowns();
 };
+
+class GridManager {
+    constructor(gridSelector, itemSelector, itemsPerPage) {
+        this.grid = document.querySelector(gridSelector);
+        this.items = this.grid.querySelectorAll(itemSelector);
+        this.display = this.items[0].style.display
+        this.filteredItems = Array.from(this.items); // Copia degli item per il filtering
+        this.itemsPerPage = itemsPerPage || 10; // Imposta il valore predefinito a 10 se non specificato
+        this.currentPage = 0;
+    }
+
+    filterItems(filterSelector) {
+        this.filteredItems = Array.from(this.items).filter(item => item.matches(filterSelector));
+        this.currentPage = 0; // Resetta alla prima pagina quando si applica un filtro
+        this.showPage();
+    }
+
+    showPage() {
+        const startIndex = this.currentPage * this.itemsPerPage;
+        const endIndex = startIndex + this.itemsPerPage;
+
+        this.items.forEach((item, index) => {
+            if (index >= startIndex && index < endIndex) {
+                item.style.display = this.display;
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    }
+
+    nextPage() {
+        const totalPages = Math.ceil(this.filteredItems.length / this.itemsPerPage);
+        if (this.currentPage < totalPages - 1) {
+            this.currentPage++;
+            this.showPage();
+        }
+    }
+
+    previousPage() {
+        if (this.currentPage > 0) {
+            this.currentPage--;
+            this.showPage();
+        }
+    }
+}

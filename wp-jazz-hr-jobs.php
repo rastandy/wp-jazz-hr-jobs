@@ -295,11 +295,6 @@ public function JobsShortCode($atts)
                                     <path d=\"M9 0C4.02429 0 0 4.069 0 9.1C0 15.925 9 26 9 26C9 26 18 15.925 18 9.1C18 4.069 13.9757 0 9 0ZM9 12.35C7.22571 12.35 5.78571 10.894 5.78571 9.1C5.78571 7.306 7.22571 5.85 9 5.85C10.7743 5.85 12.2143 7.306 12.2143 9.1C12.2143 10.894 10.7743 12.35 9 12.35Z\" fill=\"#08125A\"/>
                                   </svg><span href='#' class='sort-by-location posting-category posting-location'>{$position['location']}</span>
                                 </div>";
-            if ($position['commitment'] && trim($position['commitment']) !== "")
-                $output .= "
-                                <div class='posting-category posting-commitment'>
-                                    <span href='#' class='sort-by-commitment posting-category posting-commitment'><em>Job Type:</em> {$position['commitment']}</span>
-                                </div>";
             if ($position['department'] && trim($position['department']) !== "")
                 $output .= "
                                 <div class='posting-category department posting-department'>
@@ -313,6 +308,11 @@ public function JobsShortCode($atts)
                                         </clipPath>
                                       </defs>
                                     </svg> <span href='#' class='posting-department'>{$position['department']}</span>
+                                </div>";
+            if ($position['commitment'] && trim($position['commitment']) !== "")
+                $output .= "
+                                <div class='posting-category posting-commitment'>
+                                    <span href='#' class='sort-by-commitment posting-category posting-commitment'>Type: {$position['commitment']}</span>
                                 </div>";
             $output .= "
                             </div>
@@ -333,6 +333,10 @@ public function JobsShortCode($atts)
                                         {$output}
                                     </div>
                                   </div>";
+        $output_wrapped .= "<script>
+           const gridManager = new GridManager('.job-listings', '.job-listing', 9); // Mostra 5 item per pagina
+           gridManager.showPage()
+           </script>";
         return $output_wrapped;
     }
 }
