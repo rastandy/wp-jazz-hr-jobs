@@ -24,7 +24,7 @@ class FilterDropdowns {
                         top: offsetY,
                         behavior: "smooth"
                     })
-                    window.gridManager.setPage(0);
+                    if (window.gridManager) window.gridManager.setPage(0);
                 },
                 false
             );
