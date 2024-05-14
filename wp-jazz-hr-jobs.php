@@ -388,13 +388,13 @@ public function generateFilterDropdowns()
     ";
 
     return "<div class='filter-row'>
-              <div class='col-4'>
+              <div class='filter-input'>
                 {$location_output} 
               </div>
-              <div class='col-4'>
+              <div class='filter-input'>
                 {$dept_output}
               </div>
-              <div class='col-4'>
+              <div class='filter-input'>
                 {$commitment_output}
               </div>
             </div>";
