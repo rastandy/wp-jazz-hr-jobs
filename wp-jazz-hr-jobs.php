@@ -353,7 +353,8 @@ public function generateFilterDropdowns()
             $locations_array[] = $job_location;
         }
     }
-    $unique_locations = array_unique($locations_array);
+    $unique_locations = array_unique($locations_array, );
+    asort($unique_locations);
     foreach ($unique_locations as $location) {
         $location_options .= "<option value='{$location}'>$location</option>";
     }
