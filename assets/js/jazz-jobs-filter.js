@@ -49,7 +49,7 @@ class FilterDropdowns {
                         : filterTxt === "department"
                         ? "filterDepartment"
                         : "filterCommitment";
-                if (jobEl.dataset[jobFilterTxt] !== this.filters[filterTxt] && this.filters[filterTxt] !== "") {
+                if (this.filters[filterTxt] !== "" && !jobEl.dataset[jobFilterTxt].includes(this.filters[filterTxt])) {
                     jobEl.dataset.show = "false";
                 }
             });

@@ -341,8 +341,20 @@ public function generateFilterDropdowns()
 {
     // Location Filter
     $locations = $this->get_jazz_locations();
-    $location_options = "<option value=''> - Location - </option>";
+    $locations_array = array();
+    $location_options = "<option value=''> Location </option>";
     foreach ($locations as $location) {
+        if(strpos($location, ",") !== false) {
+            list($job_locations, $region) = explode(', ', $location, 2);
+        } else {
+            $job_locations = $location;
+        }
+        foreach (explode(' - ', $job_locations) as $job_location) {
+            $locations_array[] = $job_location;
+        }
+    }
+    $unique_locations = array_unique($locations_array);
+    foreach ($unique_locations as $location) {
         $location_options .= "<option value='{$location}'>$location</option>";
     }
     $location_output = "
