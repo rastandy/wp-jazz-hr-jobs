@@ -342,7 +342,7 @@ public function generateFilterDropdowns()
     // Location Filter
     $locations = $this->get_jazz_locations();
     $locations_array = array();
-    $location_options = "<option value=''> Location </option>";
+    $location_options = "<option value=''> - Location - </option>";
     foreach ($locations as $location) {
         if(strpos($location, ",") !== false) {
             list($job_locations, $region) = explode(', ', $location, 2);
@@ -353,7 +353,8 @@ public function generateFilterDropdowns()
             $locations_array[] = $job_location;
         }
     }
-    $unique_locations = array_unique($locations_array, );
+    $unique_locations = array_filter(array_unique($locations_array),
+                                     fn($value) => !is_null($value) && $value !== '' && $value !== 'Italy');
     asort($unique_locations);
     foreach ($unique_locations as $location) {
         $location_options .= "<option value='{$location}'>$location</option>";
