@@ -277,7 +277,9 @@ public function JobsShortCode($atts)
 
         $output .= '<ul class="job-listings">';
         foreach ($positions as $position) {
-            list($code, $title) = explode(' - ', $position['title'], 2);
+            list($code, $title) = explode('-', $position['title'], 2);
+            $code = trim($code);
+            $title = trim($title);
             $output .= "<li class='job-listing' data-posting-id='{$position['id']}' data-filter-date='{$position['createdAt']}' data-filter-location='{$position['location']}' data-filter-department='{$position['department']}' data-filter-commitment='{$position['commitment']}' data-featured='0' data-show='true'>
                             <div class='posting'>
                              <div class='posting-title-wrapper'>
