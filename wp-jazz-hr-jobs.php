@@ -351,8 +351,8 @@ public function generateFilterDropdowns()
         } else {
             $job_locations = $location;
         }
-        foreach (explode(' - ', $job_locations) as $job_location) {
-            $locations_array[] = $job_location;
+        foreach (explode('-', $job_locations) as $job_location) {
+            $locations_array[] = trim($job_location);
         }
     }
     $unique_locations = array_filter(array_unique($locations_array),
