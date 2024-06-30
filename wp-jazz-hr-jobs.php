@@ -367,18 +367,6 @@ public function generateFilterDropdowns()
             </select>
     ";
 
-    // Teams
-    $teams = $this->get_jazz_teams();
-    $team_options = "<option value=''> - Team - </option>";
-    foreach ($teams as $team) {
-        $team_options .= "<option value='{$team}'>$team</option>";
-    }
-    $team_output = "
-            <select class='form-control filter' data-filter='team'>
-              {$team_options}
-            </select>
-    ";
-
     // Departments
     $depts = $this->get_jazz_departments();
     $dept_options = "<option value=''> - Department - </option>";
@@ -443,10 +431,9 @@ public function get_jazz_positions()
                     $jazz_position = [
                         'id' => $item->id,
                         'title' => $item->title,
-                        'location' => joinFilteredStrings([$item->city, $item->state]),
+                        'location' => joinFilteredStrings([$item->city, $item->country_id]),
                         'commitment' => $item->type,
                         'department' => $item->department,
-                        'team' => $item->team_id ? $item->team_id : "",
                         'description' => preg_replace('#(<[a-z ]*)(style=("|\')(.*?)("|\'))([a-z ]*>)#', '\\1\\6', $item->description),
                         'applyUrl' => $this->generateApplyUrl($item),
                         'createdAt' => strtotime($item->original_open_date)
@@ -459,10 +446,9 @@ public function get_jazz_positions()
                 $jazz_position = [
                     'id' => $positions->id,
                     'title' => $positions->title,
-                    'location' => joinFilteredStrings([$positions->city, $positions->state], ": "),
+                    'location' => joinFilteredStrings([$positions->city, $positions->country_id]),
                     'commitment' => $positions->type,
                     'department' => $positions->department,
-                    'team' => $positions->team_id,
                     'description' => preg_replace('#(<[a-z ]*)(style=("|\')(.*?)("|\'))([a-z ]*>)#', '\\1\\6', $positions->description),
                     'applyUrl' => $this->generateApplyUrl($positions),
                     'createdAt' => strtotime($positions->original_open_date)
@@ -510,21 +496,6 @@ public function get_jazz_commitments()
     sort($commitments);
 
     return $commitments;
-}
-
-public function get_jazz_teams()
-{
-    $teams = array();
-    $positions = $this->get_jazz_positions();
-
-    foreach ($positions as $position) {
-        $teams[]  = $position['team'];
-    }
-
-    $teams = array_unique($teams);
-    sort($teams);
-
-    return $teams;
 }
 
 public function get_jazz_departments()
