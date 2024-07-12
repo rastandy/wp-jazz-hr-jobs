@@ -519,7 +519,28 @@ public function get_jazz_departments()
     return $depts;
 }
 
-public function sortJobs($jobs, $sortBy, $sortOrder) {
+public function moveSimilarObjectToTheEnd($array, $titoloRicerca)
+{
+    $oggettiSimili = [];
+
+    // Trova tutti gli oggetti con un titolo simile alla stringa di ricerca
+    foreach ($array as $indice => $oggetto) {
+        if (str_contains($oggetto['title'], $titoloRicerca)) {
+            $oggettiSimili[] = array_splice($array, $indice, 1)[0];
+        }
+    }
+
+    // Aggiungi gli oggetti simili alla fine dell'array
+    foreach ($oggettiSimili as $oggetto) {
+        $array[] = $oggetto;
+    }
+
+    // Restituisci l'array con gli oggetti simili spostati alla fine
+    return $array;
+}
+
+public function sortJobs($jobs, $sortBy, $sortOrder)
+{
     if($sortBy === "title" && $sortOrder === "asc") {
         
         usort($jobs, function($a, $b)
@@ -547,9 +568,11 @@ public function sortJobs($jobs, $sortBy, $sortOrder) {
         });
     }
 
-    return $jobs;
+    // Pull down special jobs
+    $jobs = $this->moveSimilarObjectToTheEnd($jobs, 'Categorie Protette');
+    $jobs = $this->moveSimilarObjectToTheEnd($jobs, 'STAGE in CMCC');
 
-    
+    return $jobs;
 }
 
 public function generateApplyUrl($position) {
