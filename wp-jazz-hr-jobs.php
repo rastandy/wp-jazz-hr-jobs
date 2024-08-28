@@ -11,7 +11,7 @@
  */
 
 /*
-   Copyright 2021  Niklas Dahlqvist  (email : dalkmania@gmail.com)
+   Copyright 2021, 2024  Niklas Dahlqvist  (email : dalkmania@gmail.com)
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License, version 2, as
@@ -26,6 +26,13 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
+/* Load plugin textdomain.
+*/
+function jazzhr_load_textdomain() {
+    load_plugin_textdomain( 'jazzhr', false, basename( dirname( __FILE__ ) ) . '/languages/' );
+}
+add_action( 'init', 'jazzhr_load_textdomain' );
 
 function joinFilteredStrings(array $data, string $delimiter = ', '): string
 {
@@ -331,10 +338,11 @@ public function JobsShortCode($atts)
                                 <div class='posting-category posting-commitment'>
                                     <span href='#' class='sort-by-commitment posting-category posting-commitment'>Type: {$position['commitment']}</span>
                                 </div>";
+            $apply_text = __('Apply', 'jazzhr');
             $output .= "
                             </div>
                             <div class='posting-apply'>
-                                <a class='apply-button' href='{$position['applyUrl']}' target='_blank'>Apply</a>
+                                <a class='apply-button' href='{$position['applyUrl']}' target='_blank'>{$apply_text}</a>
                             </div>
                             </div> 
                             
