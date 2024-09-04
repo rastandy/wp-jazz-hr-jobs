@@ -260,9 +260,44 @@ public function jazz_hr_url_select_callback()
 <?php
 }
 
+public function get_cmcc_departments()
+{
+    // Nome del transient
+    $transient_name = 'cmcc_departments';
+
+    // Flush the transient
+    //delete_transient($transient_name);
+
+    // Controlla se il transient esiste già
+    if ( false === ( $api_data = get_transient( $transient_name ) ) ) {
+        // Se il transient non esiste o è scaduto, interroga l'API endpoint
+        // AppScript Project: https://script.google.com/home/projects/1FnIMDlpD45BBH1Qj53SUHX9RUmozzv4yFdUgkxCgubgXgrQLDjlvD5zF/edit
+        $response = wp_remote_get( 'https://script.google.com/macros/s/AKfycbxCOPO09BhqZeqFGqqBxzCJ5o2GW8DThz4YUjyeQSxeJWHnLL-qgQGyl--6_Ocbayxrqw/exec' );
+
+        // Controlla se la richiesta è stata completata con successo
+        if ( is_wp_error( $response ) ) {
+            return []; // Gestisci l'errore a tuo piacimento
+        }
+
+        // Recupera il corpo della risposta
+        $body = wp_remote_retrieve_body( $response );
+
+        // Decodifica il JSON
+        $api_data = json_decode( $body );
+
+        // Salva il JSON in un transient per 1 ora (3600 secondi)
+        set_transient( $transient_name, $api_data, HOUR_IN_SECONDS );
+    }
+
+    // Ritorna i dati JSON
+    return (array)$api_data;
+}
+
 public function get_department_link($department) {
+    $departments = $this->get_cmcc_departments();
     $department = trim($department);
-    $link = $GLOBALS['CMCC']['departments'][$department];
+    // $link = $GLOBALS['CMCC']['departments'][$department];
+    $link = $departments[$department];
     $lang = get_bloginfo("language");
     $wpml_permalink = apply_filters( 'wpml_permalink', $link, $lang );
     return $wpml_permalink;
