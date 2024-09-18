@@ -349,8 +349,9 @@ public function JobsShortCode($atts)
                                 </div>";
             if ($position['department'] && trim($position['department']) !== "") {
                 $departments_string = "";
-                $departments = explode(" - ", $position['department']);
+                $departments = explode("; ", $position['department']);
                 foreach ($departments as $department) {
+                    $department = trim($department);
                     $department_link = $this->get_department_link($department);
                     $departments_string .= $department_link ? "<li class='single-department'><a href='{$department_link}'>{$department}</a></li>" : "<li class='single-department'>{$department}</li>";
                 }
