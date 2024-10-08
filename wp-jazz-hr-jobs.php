@@ -300,7 +300,7 @@ public function get_department_link($department) {
     $link = $departments[$department];
     $lang = get_bloginfo("language");
     $wpml_permalink = apply_filters( 'wpml_permalink', $link, $lang );
-    return $wpml_permalink;
+    return rtrim($wpml_permalink, '/');
 }
 
 public function JobsShortCode($atts)
