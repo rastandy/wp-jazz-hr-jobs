@@ -490,7 +490,7 @@ public function get_jazz_positions()
                     $jazz_position = [
                         'id' => $item->id,
                         'title' => $item->title,
-                        'location' => joinFilteredStrings([$item->city, $item->country_id]),
+                        'location' => joinFilteredStrings([ucwords(strtolower($item->city)), $item->country_id]),
                         'commitment' => $item->type,
                         'department' => $item->department,
                         'description' => preg_replace('#(<[a-z ]*)(style=("|\')(.*?)("|\'))([a-z ]*>)#', '\\1\\6', $item->description),
@@ -505,7 +505,7 @@ public function get_jazz_positions()
                 $jazz_position = [
                     'id' => $positions->id,
                     'title' => $positions->title,
-                    'location' => joinFilteredStrings([$positions->city, $positions->country_id]),
+                    'location' => joinFilteredStrings([ucwords(strtolower($positions->city)), $positions->country_id]),
                     'commitment' => $positions->type,
                     'department' => $positions->department,
                     'description' => preg_replace('#(<[a-z ]*)(style=("|\')(.*?)("|\'))([a-z ]*>)#', '\\1\\6', $positions->description),
