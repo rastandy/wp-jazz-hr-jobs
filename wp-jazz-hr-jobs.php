@@ -53,6 +53,9 @@ if (! class_exists("JazzHRJobs")) {
     {
         private $options;
         private $apiBaseUrl;
+        private $api_key;
+        private $subdomain;
+        private $job_url;
 
         /**
          * Start up
@@ -60,9 +63,11 @@ if (! class_exists("JazzHRJobs")) {
         public function __construct()
         {
             $this->options = get_option('jazz_hr_settings');
-            $this->api_key = $this->options['api_key'];
-            $this->subdomain = 'https://' . $this->options['subdomain'] .'.applytojob.com';
-            $this->job_url = $this->options['url_select'];
+            
+            // Initialize properties with safe defaults
+            $this->api_key = isset($this->options['api_key']) ? $this->options['api_key'] : '';
+            $this->subdomain = isset($this->options['subdomain']) ? 'https://' . $this->options['subdomain'] . '.applytojob.com' : '';
+            $this->job_url = isset($this->options['url_select']) ? $this->options['url_select'] : 'default';
             $this->apiBaseUrl = 'https://api.resumatorapi.com/v1/';
 
             add_action('admin_menu', array( $this, 'add_plugin_page' ));
@@ -87,13 +92,17 @@ if (! class_exists("JazzHRJobs")) {
             }
 
             $shortcode = false;
-            $fields = get_post_meta($post->ID);
+            
+            // Check if $post is a valid object before accessing its properties
+            if (is_object($post) && isset($post->ID)) {
+                $fields = get_post_meta($post->ID);
 
-            if (!empty($fields)) {
-                foreach ($fields as $key => $val) {
-                    if (substr($key, 0, 1) !== '_') {
-                        if (preg_match('/jazz_hr_job_listings/', $val[0], $match)) {
-                            $shortcode = true;
+                if (!empty($fields)) {
+                    foreach ($fields as $key => $val) {
+                        if (substr($key, 0, 1) !== '_') {
+                            if (preg_match('/jazz_hr_job_listings/', $val[0], $match)) {
+                                $shortcode = true;
+                            }
                         }
                     }
                 }
@@ -101,18 +110,18 @@ if (! class_exists("JazzHRJobs")) {
 
             if ($shortcode) {
                 wp_enqueue_style('jazz-jobs-styles', $this->getBaseUrl() . '/assets/css/jazz-postings-styles.css');
-                wp_enqueue_script('jazz-jobs-script', $this->getBaseUrl() . '/assets/js/jazz-jobs-filter.js', '1.0.0', true);
+                wp_enqueue_script('jazz-jobs-script', $this->getBaseUrl() . '/assets/js/jazz-jobs-filter.js', array(), '1.0.0', true);
             }
 
             if (is_a($post, 'WP_Post') && has_shortcode($post->post_content, 'jazz_hr_job_listings')) {
                 wp_enqueue_style('jazz-jobs-styles', $this->getBaseUrl() . '/assets/css/jazz-postings-styles.css');
-                wp_enqueue_script('jazz-jobs-script', $this->getBaseUrl() . '/assets/js/jazz-jobs-filter.js', '1.0.0', true);
+                wp_enqueue_script('jazz-jobs-script', $this->getBaseUrl() . '/assets/js/jazz-jobs-filter.js', array(), '1.0.0', true);
             }
         }
 
         public function admin_plugin_styles()
         {
-            wp_enqueue_style('jazz-jobs-admin-styles', $this->getBaseUrl() . '/assets/css/jazz-postings-admin-styles.css', '1.0.0', true);
+            wp_enqueue_style('jazz-jobs-admin-styles', $this->getBaseUrl() . '/assets/css/jazz-postings-admin-styles.css', array(), '1.0.0');
             wp_enqueue_script('jazz-admin', $this->getBaseUrl() . '/assets/js/jazz-admin.js', ['jquery'], '1.0.0', true);
         }
 
@@ -311,7 +320,7 @@ public function JobsShortCode($atts)
         'sort_order' => ''
     ), $atts);
     
-    if ((isset($this->api_key) && $this->api_key != '' && (isset($this->subdomain) && $this->subdomain != ''))) {
+    if ((!empty($this->api_key) && !empty($this->subdomain))) {
         $output = '';
         $positions = $this->get_jazz_positions();
         $positions = $this->sortJobs($positions, $args["sort_by"], $args["sort_order"]);
@@ -466,14 +475,25 @@ public function generateFilterDropdowns()
 // Send Curl Request to Lever Endpoint and return the response
 public function sendRequest()
 {
+    if (empty($this->api_key)) {
+        return [];  // Return empty array if API key is not set
+    }
+    
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $this->apiBaseUrl . 'jobs/status/open?apikey=' .$this->api_key);
+    curl_setopt($ch, CURLOPT_URL, $this->apiBaseUrl . 'jobs/status/open?apikey=' . $this->api_key);
     curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-    $response = json_decode(curl_exec($ch));
-    return $response;
+    $response = curl_exec($ch);
+    
+    if ($response === false) {
+        return [];  // Return empty array on curl error
+    }
+    
+    $decoded = json_decode($response);
+    curl_close($ch);
+    return $decoded ?: [];  // Return decoded response or empty array if decoding fails
 }
 
 public function get_jazz_positions()
@@ -629,11 +649,14 @@ public function sortJobs($jobs, $sortBy, $sortOrder)
 }
 
 public function generateApplyUrl($position) {
-    if($this->job_url == 'custom') {
-        return $this->subdomain . '/apply/' . $position->board_code . '/' . sanitize_title($position->title);
-    } else {
-        return $this->subdomain . '/apply/jobs/details/' . $position->board_code;
+    if(!empty($this->subdomain)) {
+        if($this->job_url === 'custom') {
+            return $this->subdomain . '/apply/' . $position->board_code . '/' . sanitize_title($position->title);
+        } else {
+            return $this->subdomain . '/apply/jobs/details/' . $position->board_code;
+        }
     }
+    return '#'; // Return fallback URL if subdomain is not set
 }
 
 public function storeJazzPostions($positions)
