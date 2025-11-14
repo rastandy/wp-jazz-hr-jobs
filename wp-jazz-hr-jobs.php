@@ -305,7 +305,12 @@ public function get_cmcc_departments()
 public function get_department_link($department) {
     $departments = $this->get_cmcc_departments();
     $department = trim($department);
-    // $link = $GLOBALS['CMCC']['departments'][$department];
+    
+    // Check if department exists in array
+    if (!isset($departments[$department])) {
+        return null;
+    }
+    
     $link = $departments[$department];
     $lang = get_bloginfo("language");
     $wpml_permalink = apply_filters( 'wpml_permalink', $link, $lang );
